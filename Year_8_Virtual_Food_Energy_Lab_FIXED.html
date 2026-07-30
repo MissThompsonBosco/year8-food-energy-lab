@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Year 8 Science – Virtual Food Energy Lab</title>
+<style>
+  :root { --ink:#1f2937; --muted:#64748b; --line:#cbd5e1; --panel:#f8fafc; --accent:#2563eb; --good:#15803d; --bad:#b91c1c; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:Arial,Helvetica,sans-serif; color:var(--ink); background:#eef2f7; line-height:1.45; }
+  .wrap { max-width:1050px; margin:auto; padding:24px; }
+  header { background:white; border-radius:16px; padding:24px 28px; box-shadow:0 3px 12px #0001; margin-bottom:18px; }
+  h1 { margin:0 0 6px; font-size:30px; }
+  h2 { font-size:21px; margin:0 0 12px; }
+  h3 { font-size:17px; margin:18px 0 8px; }
+  .subtitle { color:var(--muted); }
+  .student { display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px; margin-top:16px; }
+  input, select, textarea { width:100%; padding:9px 10px; border:1px solid var(--line); border-radius:7px; font:inherit; }
+  textarea { min-height:72px; resize:vertical; }
+  .card { background:white; border-radius:14px; padding:22px; margin:16px 0; box-shadow:0 2px 8px #0000000d; }
+  .step { display:inline-block; background:var(--accent); color:white; border-radius:999px; padding:4px 10px; font-size:12px; font-weight:bold; margin-bottom:8px; }
+  .info { background:#eff6ff; border-left:4px solid var(--accent); padding:12px 14px; border-radius:6px; }
+  .warning { background:#fff7ed; border-left:4px solid #ea580c; padding:12px 14px; border-radius:6px; }
+  .lab { display:grid; grid-template-columns:1.1fr .9fr; gap:20px; }
+  .apparatus { min-height:360px; background:linear-gradient(#f8fafc,#e2e8f0); border:1px solid var(--line); border-radius:12px; position:relative; overflow:hidden; }
+  .stand { position:absolute; left:13%; top:10%; bottom:8%; width:8px; background:#475569; border-radius:4px; }
+  .clamp { position:absolute; left:13%; top:22%; width:38%; height:8px; background:#475569; }
+  .tube { position:absolute; left:30%; top:22%; width:27%; height:145px; border:5px solid #94a3b8; border-top:0; border-radius:0 0 18px 18px; background:linear-gradient(to top, #93c5fd 0 45%, transparent 45%); }
+  .water { position:absolute; left:35%; top:106px; width:17%; height:62px; border-radius:0 0 10px 10px; background:#60a5fa99; }
+  .thermo { position:absolute; left:58%; top:27%; width:10px; height:130px; background:#f1f5f9; border:2px solid #64748b; border-radius:8px; }
+  .thermo:after { content:""; position:absolute; width:22px; height:22px; background:#ef4444; border-radius:50%; bottom:-10px; left:-8px; }
+  .food-holder { position:absolute; left:43%; top:55%; width:80px; height:8px; background:#64748b; transform:rotate(-12deg); }
+  .food { position:absolute; left:37%; top:48%; width:42px; height:32px; border-radius:45%; background:#d6a15c; border:2px solid #9a6b32; box-shadow:0 0 0 0 #f97316; }
+  .food.burning { animation:flame .7s infinite alternate; }
+  @keyframes flame { from { box-shadow:0 -8px 16px 3px #f59e0b; transform:scale(1); } to { box-shadow:0 -18px 28px 8px #ef4444; transform:scale(1.05); } }
+  .thermometer-read { position:absolute; right:7%; top:18%; background:#0f172a; color:#f8fafc; padding:12px; border-radius:9px; min-width:120px; text-align:center; }
+  .temp { font-size:25px; font-weight:bold; }
+  .controls { display:grid; gap:12px; }
+  button { border:0; background:var(--accent); color:white; padding:10px 15px; border-radius:8px; font-weight:bold; cursor:pointer; }
+  button:hover { filter:brightness(.95); }
+  button.secondary { background:#475569; }
+  button.good { background:var(--good); }
+  button:disabled { opacity:.45; cursor:not-allowed; }
+  .button-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  table { width:100%; border-collapse:collapse; margin-top:10px; }
+  th,td { border:1px solid var(--line); padding:8px; text-align:left; vertical-align:top; }
+  th { background:#f1f5f9; }
+  .result { padding:10px; border-radius:8px; background:#f8fafc; margin-top:8px; }
+  .feedback { font-weight:bold; margin-top:7px; }
+  .goodtext { color:var(--good); }
+  .badtext { color:var(--bad); }
+  .formula { background:#f8fafc; border:1px dashed #94a3b8; padding:12px; border-radius:8px; font-size:18px; text-align:center; margin:10px 0; }
+  .quiz q { font-weight:bold; }
+  .progress { height:9px; background:#e2e8f0; border-radius:999px; overflow:hidden; margin-top:10px; }
+  .bar { height:100%; background:var(--accent); width:0%; transition:.3s; }
+  .score { font-size:20px; font-weight:bold; }
+  footer { text-align:center; color:var(--muted); padding:18px; font-size:12px; }
+  @media(max-width:800px){ .lab{grid-template-columns:1fr}.student{grid-template-columns:1fr} }
+  @media print { body{background:white}.card,header{box-shadow:none;border:1px solid #ddd}.button-row,.no-print{display:none}.apparatus{break-inside:avoid} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>🔥 Virtual Food Energy Lab</h1>
+  <div class="subtitle">Year 8 Science • Measuring the energy released when food burns</div>
+  <div class="student">
+    <input id="name" placeholder="Student name">
+    <input id="class" placeholder="Class">
+    <input id="date" type="date">
+  </div>
+  <div class="progress"><div class="bar" id="progress"></div></div>
+</header>
+
+<div class="card">
+  <span class="step">BEFORE YOU START</span>
+  <h2>Aim</h2>
+  <p>To investigate how much energy is released when a small piece of food is burned and transferred to water.</p>
+  <div class="info">
+    <strong>Key idea:</strong> When food burns, chemical energy is released. In this virtual experiment, some of that energy is transferred to the water, causing its temperature to increase.
+  </div>
+  <h3>Hypothesis</h3>
+  <p>Which food do you predict will release the most energy?</p>
+  <select id="hypothesis">
+    <option value="">Choose a food...</option>
+    <option>Cheeto</option><option>Nutri-Grain</option><option>Tiny Teddy</option>
+  </select>
+  <textarea id="hypothesisReason" placeholder="Explain why you chose it."></textarea>
+</div>
+
+<div class="card">
+  <span class="step">PART 1</span>
+  <h2>Set up the virtual experiment</h2>
+  <div class="lab">
+    <div class="apparatus">
+      <div class="stand"></div><div class="clamp"></div><div class="tube"></div><div class="water"></div>
+      <div class="thermo"></div><div class="food-holder"></div><div class="food" id="foodVisual"></div>
+      <div class="thermometer-read"><div>Water temperature</div><div class="temp" id="displayTemp">20.0 °C</div></div>
+    </div>
+    <div>
+      <h3>Equipment</h3>
+      <ul>
+        <li>10 mL of water</li>
+        <li>Test tube and clamp</li>
+        <li>Thermometer</li>
+        <li>Food sample</li>
+        <li>Food holder</li>
+      </ul>
+      <div class="warning"><strong>Virtual safety:</strong> This simulation represents burning food. Do not attempt this experiment without teacher supervision in a real laboratory.</div>
+      <h3>Choose your food</h3>
+      <select id="foodSelect">
+        <option value="Cheeto">Cheeto</option>
+        <option value="Nutri-Grain">Nutri-Grain</option>
+        <option value="Tiny Teddy">Tiny Teddy</option>
+      </select>
+      <p><strong>Water volume:</strong> 10 mL</p>
+      <p><strong>Water mass:</strong> 10 g</p>
+      <p><strong>Specific heat capacity of water:</strong> 4.18 J/g°C</p>
+      <div class="button-row">
+        <button onclick="startTrial()">Reset / Set up</button>
+        <button class="good" id="burnBtn" onclick="burnFood()">🔥 Heat food</button>
+      </div>
+      <div id="burnMessage" class="result">Measure the initial temperature, then click <strong>Heat food</strong>.</div>
+      <div class="info no-print" style="margin-top:10px">
+        <strong>If the button does nothing:</strong> your school platform may be blocking JavaScript in uploaded HTML files.
+        Open this file directly in Chrome/Edge, or upload it to a web host that allows JavaScript.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <span class="step">PART 2</span>
+  <h2>Collect your data</h2>
+  <p>Record the initial and final temperatures shown by the virtual thermometer.</p>
+  <table>
+    <thead><tr><th>Food</th><th>Initial temperature (°C)</th><th>Final temperature (°C)</th><th>Change in temperature (°C)</th></tr></thead>
+    <tbody>
+      <tr>
+        <td id="dataFood">Cheeto</td>
+        <td><input id="initialTemp" type="number" step="0.1" value="20.0"></td>
+        <td><input id="finalTemp" type="number" step="0.1" readonly></td>
+        <td><input id="changeTemp" type="number" step="0.1" readonly></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="button-row no-print"><button onclick="calculateTemp()">Calculate temperature change</button></div>
+  <div id="tempFeedback" class="feedback"></div>
+</div>
+
+<div class="card">
+  <span class="step">PART 3</span>
+  <h2>Calculate the energy released</h2>
+  <p>For this Year 8 investigation, use the simplified relationship from your workbook:</p>
+  <div class="formula">Energy released (J) = 42 × change in temperature (°C)</div>
+  <p>Calculate the energy released by your chosen food.</p>
+  <div class="result">
+    <strong>Your calculation:</strong><br>
+    42 × <input id="calcDelta" type="number" step="0.1" style="max-width:120px;display:inline-block"> =
+    <input id="calcEnergy" type="number" step="1" style="max-width:150px;display:inline-block"> J
+  </div>
+  <div class="button-row no-print"><button onclick="checkEnergy()">Check calculation</button></div>
+  <div id="energyFeedback" class="feedback"></div>
+  <h3>Convert your answer</h3>
+  <p>1 kJ = 1000 J</p>
+  <p>Energy released = <input id="kj" type="number" step="0.001" style="max-width:160px;display:inline-block"> kJ</p>
+  <div class="button-row no-print"><button onclick="convertKJ()">Check conversion</button></div>
+  <div id="kjFeedback" class="feedback"></div>
+</div>
+
+<div class="card">
+  <span class="step">PART 4</span>
+  <h2>Compare the foods</h2>
+  <p>Repeat the virtual experiment for all three foods. Each food has a different preset final temperature so you can compare your results.</p>
+  <table id="comparison">
+    <thead><tr><th>Food</th><th>Initial temp (°C)</th><th>Final temp (°C)</th><th>ΔT (°C)</th><th>Energy released (J)</th></tr></thead>
+    <tbody>
+      <tr><td>Cheeto</td><td>20.0</td><td>32.0</td><td>12.0</td><td>504</td></tr>
+      <tr><td>Nutri-Grain</td><td>20.0</td><td>38.0</td><td>18.0</td><td>756</td></tr>
+      <tr><td>Tiny Teddy</td><td>20.0</td><td>29.0</td><td>9.0</td><td>378</td></tr>
+    </tbody>
+  </table>
+  <h3>Questions</h3>
+  <p>1. Which food released the most energy?</p>
+  <input id="q1">
+  <p>2. Which food released the least energy?</p>
+  <input id="q2">
+  <p>3. What happened to the temperature of the water when the food burned?</p>
+  <textarea id="q3"></textarea>
+  <p>4. Why does a larger temperature increase suggest that more energy was transferred to the water?</p>
+  <textarea id="q4"></textarea>
+</div>
+
+<div class="card quiz">
+  <span class="step">PART 5</span>
+  <h2>Think like a scientist</h2>
+  <p><q>Our experiment measures all of the chemical energy in the food.</q> Do you agree?</p>
+  <select id="agree">
+    <option value="">Choose...</option>
+    <option value="no">No</option>
+    <option value="yes">Yes</option>
+  </select>
+  <textarea id="explain" placeholder="Explain your answer."></textarea>
+  <div class="info">
+    <strong>Think about:</strong> Not all of the heat produced by burning food reaches the water. Some energy can be transferred to the surroundings, the apparatus and the air, and some food may not burn completely.
+  </div>
+  <h3>Sources of error</h3>
+  <p>Identify three possible sources of error in the real experiment.</p>
+  <textarea id="errors" placeholder="1.&#10;2.&#10;3."></textarea>
+  <h3>How could the investigation be improved?</h3>
+  <textarea id="improve"></textarea>
+</div>
+
+<div class="card">
+  <span class="step">EXIT TICKET</span>
+  <h2>What have you learned?</h2>
+  <p>Complete these statements.</p>
+  <p><strong>1.</strong> Food stores __________________ energy.</p>
+  <input id="exit1">
+  <p><strong>2.</strong> When food burns, energy is __________________.</p>
+  <input id="exit2">
+  <p><strong>3.</strong> The energy transferred to the water causes its __________________ to increase.</p>
+  <input id="exit3">
+  <p><strong>4.</strong> The unit of energy used in our calculations is the __________________.</p>
+  <input id="exit4">
+  <div class="button-row no-print">
+    <button class="good" onclick="finishLab()">Finish & check</button>
+    <button class="secondary" onclick="window.print()">Print / Save as PDF</button>
+    <button class="secondary" onclick="resetAll()">Reset lab</button>
+  </div>
+  <div id="finalScore" class="score"></div>
+</div>
+
+<footer>Year 8 Science • Virtual Food Energy Investigation • Designed as a digital companion to the classroom practical</footer>
+</div>
+
+<script>
+const trials = {
+  "Cheeto": { final:32.0, energy:504 },
+  "Nutri-Grain": { final:38.0, energy:756 },
+  "Tiny Teddy": { final:29.0, energy:378 }
+};
+let currentFinal = 32.0;
+
+function setProgress() {
+  const ids = ["hypothesis","foodSelect","initialTemp","finalTemp","calcEnergy","q1","q2","q3","q4","agree","explain","errors","improve","exit1","exit2","exit3","exit4"];
+  let filled = ids.filter(id => {
+    const e=document.getElementById(id); return e && e.value.trim()!=="";
+  }).length;
+  document.getElementById("progress").style.width = Math.min(100, Math.round(filled/ids.length*100))+"%";
+}
+document.addEventListener("input", setProgress);
+
+function updateFood() {
+  const food = document.getElementById("foodSelect").value;
+  document.getElementById("dataFood").textContent = food;
+  document.getElementById("dataFood").dataset.food = food;
+  currentFinal = trials[food].final;
+  document.getElementById("finalTemp").value = "";
+  document.getElementById("changeTemp").value = "";
+  document.getElementById("calcDelta").value = "";
+  document.getElementById("calcEnergy").value = "";
+  document.getElementById("kj").value = "";
+  document.getElementById("displayTemp").textContent = "20.0 °C";
+  document.getElementById("foodVisual").classList.remove("burning");
+  document.getElementById("burnMessage").textContent = "Measure the initial temperature, then burn the food.";
+}
+document.getElementById("foodSelect").addEventListener("change", updateFood);
+
+function startTrial() {
+  updateFood();
+  document.getElementById("initialTemp").value = "20.0";
+  document.getElementById("burnBtn").disabled = false;
+}
+
+function burnFood() {
+  const food = document.getElementById("foodSelect").value;
+  currentFinal = trials[food].final;
+  document.getElementById("foodVisual").classList.add("burning");
+  document.getElementById("burnMessage").textContent = "Food is burning... energy is being transferred to the water.";
+  document.getElementById("burnBtn").disabled = true;
+  let start=20, end=currentFinal, t=0;
+  const timer=setInterval(()=>{
+    t++;
+    let temp=start+(end-start)*Math.min(t/10,1);
+    document.getElementById("displayTemp").textContent=temp.toFixed(1)+" °C";
+    if(t>=10){
+      clearInterval(timer);
+      document.getElementById("foodVisual").classList.remove("burning");
+      document.getElementById("finalTemp").value=end.toFixed(1);
+      document.getElementById("burnMessage").textContent = "The food has finished burning. Record the final temperature.";
+      calculateTemp();
+    }
+  },120);
+}
+
+function calculateTemp() {
+  const initial=parseFloat(document.getElementById("initialTemp").value);
+  const final=parseFloat(document.getElementById("finalTemp").value);
+  if(isNaN(initial)||isNaN(final)){ document.getElementById("tempFeedback").textContent="Burn the food first."; return; }
+  const d=final-initial;
+  document.getElementById("changeTemp").value=d.toFixed(1);
+  document.getElementById("calcDelta").value=d.toFixed(1);
+  document.getElementById("tempFeedback").innerHTML=`<span class="goodtext">ΔT = ${final.toFixed(1)} − ${initial.toFixed(1)} = ${d.toFixed(1)} °C</span>`;
+}
+
+function checkEnergy() {
+  const delta=parseFloat(document.getElementById("changeTemp").value);
+  const entered=parseFloat(document.getElementById("calcEnergy").value);
+  if(isNaN(delta)||isNaN(entered)){ document.getElementById("energyFeedback").textContent="Complete the temperature change and calculation first."; return; }
+  const correct=42*delta;
+  document.getElementById("energyFeedback").innerHTML = Math.abs(entered-correct)<0.5
+    ? `<span class="goodtext">✓ Correct! ${delta} × 42 = ${correct.toFixed(0)} J.</span>`
+    : `<span class="badtext">Try again. Multiply the change in temperature by 42.</span>`;
+}
+
+function convertKJ() {
+  const j=parseFloat(document.getElementById("calcEnergy").value);
+  const kj=parseFloat(document.getElementById("kj").value);
+  if(isNaN(j)||isNaN(kj)){ document.getElementById("kjFeedback").textContent="Enter your joule value and kJ conversion."; return; }
+  const correct=j/1000;
+  document.getElementById("kjFeedback").innerHTML = Math.abs(kj-correct)<0.001
+    ? `<span class="goodtext">✓ Correct! ${j} J = ${correct.toFixed(3)} kJ.</span>`
+    : `<span class="badtext">Remember: divide joules by 1000 to convert to kilojoules.</span>`;
+}
+
+function finishLab() {
+  let score=0, total=7;
+  const answers=[
+    ["q1","Nutri-Grain"],["q2","Tiny Teddy"],["exit1","chemical"],["exit2","released"],["exit3","temperature"],["exit4","joule"]
+  ];
+  answers.forEach(([id,ans])=>{
+    if(document.getElementById(id).value.toLowerCase().includes(ans)) score++;
+  });
+  const agree=document.getElementById("agree").value;
+  if(agree==="no") score++;
+  document.getElementById("finalScore").textContent=`Quick check: ${score}/${total} key responses correct. Review any answers you are unsure about.`;
+  setProgress();
+}
+
+function resetAll() {
+  if(confirm("Reset the entire virtual lab?")) location.reload();
+}
+</script>
+</body>
+</html>
